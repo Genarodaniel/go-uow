@@ -1,4 +1,4 @@
-module github.com/devfullcycle/goexpert/18-UOW
+module github.com/Genarodaniel/go-uow
 
 go 1.19
 
