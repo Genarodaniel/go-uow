@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/Genarodaniel/go-uow/entity"
+	"github.com/Genarodaniel/go-uow/internal/entity"
+	"github.com/Genarodaniel/go-uow/internal/repository"
 	"github.com/Genarodaniel/go-uow/pkg/uow"
-	"github.com/Genarodaniel/go-uow/repository"
 )
 
 type InputUseCaseUow struct {
@@ -18,32 +18,52 @@ type AddCourseUseCaseUow struct {
 	Uow uow.UowInterface
 }
 
-func NewAddCourseUseCaseUow(courseRepository repository.CourseRepositoryInterface, categoryRepository repository.CategoryRepositoryInterface) *AddCourseUseCase {
-	return &AddCourseUseCase{
-		CourseRepository:   courseRepository,
-		CategoryRepository: categoryRepository,
+func NewAddCourseUseCaseUow(uow uow.UowInterface) *AddCourseUseCaseUow {
+	return &AddCourseUseCaseUow{
+		Uow: uow,
 	}
 }
 
-func (a *AddCourseUseCase) Execute(ctx context.Context, input InputUseCase) error {
-	category := entity.Category{
-		Name: input.CategoryName,
-	}
+func (a *AddCourseUseCaseUow) Execute(ctx context.Context, input InputUseCase) error {
+	return a.Uow.Do(ctx, func(uow *uow.Uow) error {
+		//tudo que colocar aqui será feito um begin e rollback;
+		category := entity.Category{
+			Name: input.CategoryName,
+		}
 
-	err := a.CategoryRepository.Insert(ctx, category)
+		err := a.getCategoryRepository(ctx).Insert(ctx, category)
+		if err != nil {
+			return err
+		}
+
+		course := entity.Course{
+			Name:       input.CourseName,
+			CategoryID: input.CourseCategoryID,
+		}
+
+		err = a.getCourseRepository(ctx).Insert(ctx, course)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (a *AddCourseUseCaseUow) getCategoryRepository(ctx context.Context) repository.CategoryRepositoryInterface {
+	repo, err := a.Uow.GetRepository(ctx, "CategoryRepository")
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	course := entity.Course{
-		Name:       input.CourseName,
-		CategoryID: input.CourseCategoryID,
-	}
+	return repo.(repository.CategoryRepositoryInterface)
+}
 
-	err = a.CourseRepository.Insert(ctx, course)
+func (a *AddCourseUseCaseUow) getCourseRepository(ctx context.Context) repository.CourseRepositoryInterface {
+	repo, err := a.Uow.GetRepository(ctx, "CourseRepository")
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	return nil
+	return repo.(repository.CourseRepositoryInterface)
 }
