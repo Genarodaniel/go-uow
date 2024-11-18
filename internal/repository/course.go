@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/devfullcycle/goexpert/18-UOW/internal/db"
-	"github.com/devfullcycle/goexpert/18-UOW/internal/entity"
+	"github.com/Genarodaniel/go-uow/internal/db"
+	"github.com/Genarodaniel/go-uow/internal/entity"
 )
 
 type CourseRepositoryInterface interface {

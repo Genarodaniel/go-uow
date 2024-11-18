@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/devfullcycle/goexpert/18-UOW/internal/repository"
+	"github.com/Genarodaniel/go-uow/internal/repository"
 	"github.com/stretchr/testify/assert"
 
 	_ "github.com/go-sql-driver/mysql"

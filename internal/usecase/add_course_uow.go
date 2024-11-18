@@ -3,22 +3,22 @@ package usecase
 import (
 	"context"
 
-	"github.com/Genarodaniel/go-uow/internal/entity"
-	"github.com/Genarodaniel/go-uow/internal/repository"
+	"github.com/Genarodaniel/go-uow/entity"
+	"github.com/Genarodaniel/go-uow/pkg/uow"
+	"github.com/Genarodaniel/go-uow/repository"
 )
 
-type InputUseCase struct {
+type InputUseCaseUow struct {
 	CategoryName     string
 	CourseName       string
 	CourseCategoryID int
 }
 
-type AddCourseUseCase struct {
-	CourseRepository   repository.CourseRepositoryInterface
-	CategoryRepository repository.CategoryRepositoryInterface
+type AddCourseUseCaseUow struct {
+	Uow uow.UowInterface
 }
 
-func NewAddCourseUseCase(courseRepository repository.CourseRepositoryInterface, categoryRepository repository.CategoryRepositoryInterface) *AddCourseUseCase {
+func NewAddCourseUseCaseUow(courseRepository repository.CourseRepositoryInterface, categoryRepository repository.CategoryRepositoryInterface) *AddCourseUseCase {
 	return &AddCourseUseCase{
 		CourseRepository:   courseRepository,
 		CategoryRepository: categoryRepository,
